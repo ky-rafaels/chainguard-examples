@@ -1,0 +1,26 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak 
+  namespace: argocd
+spec:
+  project: default
+  source: 
+    repoURL: oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak 
+    chart: keycloak
+    targetRevision: 24.6.6 
+    helm:
+      ignoreMissingValueFiles: true
+      values: |
+        global:
+          org: ky-rafaels.example.com
+  destination:
+    name: "in-cluster"
+    namespace: 'keycloak'
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

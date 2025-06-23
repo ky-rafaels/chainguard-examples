@@ -1,0 +1,16 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  annotations:
+    managed-by: argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/secret-type: repository
+  name: iamguarded-creds 
+  namespace: argocd
+type: Opaque
+data:
+  enableOCI: true 
+  name: iamguarded-creds 
+  project: default
+  type: helm 
+  url: cgr.dev/ky-rafaels.example.com/iamguarded-charts 
