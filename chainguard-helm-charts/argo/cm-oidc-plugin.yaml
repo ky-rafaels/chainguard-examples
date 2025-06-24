@@ -5,10 +5,20 @@ metadata:
   namespace: argocd
 data:
   configManagementPlugins: |
-    - name: oidc-helm
+    - name: helm-oci
       init:
-        command: ["/bin/sh", "-c"]
-        args: ["export TOKEN=$(curl -X POST https://keycloak/auth/...); helm repo add ... --username dummy --password $TOKEN"]
+        command: [sh, -c]
+        args:
+          - |
+            helm registry login oci://my-registry.io \
+              --username $HELM_USERNAME \
+              --password $HELM_PASSWORD
+            helm pull oci://my-registry.io/my-chart \
+              --version $HELM_CHART_VERSION \
+              --untar --untardir /tmp/chart
       generate:
-        command: ["helm"]
-        args: ["template", ...]
+        command: [sh, -c]
+        args:
+          - helm template $ARGOCD_APP_NAME /tmp/chart \
+              --namespace $ARGOCD_APP_NAMESPACE \
+              --values <(echo "$ARGOCD_APP_VALUES")
