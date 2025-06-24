@@ -24,6 +24,10 @@ Your pull token should already be created if you followed the steps above to dep
 
 ## Register ArgoCD with Keycloak
 
+```bash
+cat <<EOF | kubectl create -n default -f -
+
+```
 
 ## Create a Keycloak Assumable Identity
 

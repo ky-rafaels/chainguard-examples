@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argocd
+data:
+  configManagementPlugins: |
+    - name: oidc-helm
+      init:
+        command: ["/bin/sh", "-c"]
+        args: ["export TOKEN=$(curl -X POST https://keycloak/auth/...); helm repo add ... --username dummy --password $TOKEN"]
+      generate:
+        command: ["helm"]
+        args: ["template", ...]
