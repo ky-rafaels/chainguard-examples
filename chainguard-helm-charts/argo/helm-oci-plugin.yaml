@@ -14,15 +14,16 @@ data:
         command: [sh, -c]
         args:
           - |
-            chainctl auth login oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
-              --username $HELM_USERNAME \
-              --password $HELM_PASSWORD
-            helm pull oci://my-registry.io/my-chart \
-              --version $HELM_CHART_VERSION \
-              --untar --untardir /tmp/chart
-      generate:
-        command: [sh, -c]
-        args:
-          - helm template $ARGOCD_APP_NAME /tmp/chart \
-              --namespace $ARGOCD_APP_NAMESPACE \
-              --values <(echo "$ARGOCD_APP_VALUES")
+            cat /var/run/secrets/tokens/oidc-token | helm registry login \ 
+              --username argocd-plugin \
+              --password-stdin \
+              oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts
+      # generate:
+      #   command: [sh, -c]
+      #   args:
+      #     - helm template $ARGOCD_APP_NAME /tmp/chart \
+      #         --namespace $ARGOCD_APP_NAMESPACE \
+      #         --values <(echo "$ARGOCD_APP_VALUES")
+# helm pull oci://my-registry.io/my-chart \
+#   --version $HELM_CHART_VERSION \
+#   --untar --untardir /tmp/chart
