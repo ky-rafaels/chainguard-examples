@@ -10,7 +10,7 @@ data:
         command: [sh, -c]
         args:
           - |
-            helm registry login oci://my-registry.io \
+            chainctl auth login oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
               --username $HELM_USERNAME \
               --password $HELM_PASSWORD
             helm pull oci://my-registry.io/my-chart \
