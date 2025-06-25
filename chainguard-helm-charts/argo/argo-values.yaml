@@ -27,14 +27,12 @@ repoServer:
       - mountPath: /home/argocd/cmp-server/config/plugin.yaml
         subPath: plugin.yaml
         name: helm-plugin-config
-      - mountPath: /var/run/argocd/helm-plugin/generate.sh
-        subPath: generate.sh
-        name: helm-plugin-config
-      - mountPath: /var/run/argocd/helm-plugin/get-parameters.sh
-        subPath: get-parameters.sh
-        name: helm-plugin-config
-      - mountPath: /usr/local/bin
-        name: helm-plugin-tools
+      # - mountPath: /var/run/argocd/helm-plugin/generate.sh
+      #   subPath: generate.sh
+      #   name: helm-plugin-config
+      # - mountPath: /var/run/argocd/helm-plugin/get-parameters.sh
+      #   subPath: get-parameters.sh
+      #   name: helm-plugin-config
   volumes:
   - name: oidc-token
     projected:

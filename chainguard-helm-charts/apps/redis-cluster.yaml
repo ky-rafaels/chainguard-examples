@@ -19,7 +19,7 @@ spec:
           org: ky-rafaels.example.com
   destination:
     name: "in-cluster"
-    namespace: 'keycloak'
+    namespace: 'redis-cluster'
   syncPolicy:
     automated:
       prune: true
