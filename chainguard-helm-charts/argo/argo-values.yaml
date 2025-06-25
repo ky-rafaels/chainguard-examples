@@ -27,12 +27,9 @@ repoServer:
       - mountPath: /home/argocd/cmp-server/config/plugin.yaml
         subPath: plugin.yaml
         name: helm-plugin-config
-      # - mountPath: /var/run/argocd/helm-plugin/generate.sh
-      #   subPath: generate.sh
-      #   name: helm-plugin-config
-      # - mountPath: /var/run/argocd/helm-plugin/get-parameters.sh
-      #   subPath: get-parameters.sh
-      #   name: helm-plugin-config
+      - name: oidc-token
+        mountPath: /var/run/secrets/tokens
+        readOnly: true
   volumes:
   - name: oidc-token
     projected:
@@ -40,7 +37,7 @@ repoServer:
       - serviceAccountToken:
           path: oidc-token
           expirationSeconds: 3600
-          audience: <>
+          audience: https://issuer.enforce.dev
   - configMap:
       name: helm-plugin-config
     name: helm-plugin-config
@@ -48,11 +45,6 @@ repoServer:
     name: helm-plugin-tmp
   - emptyDir: {}
     name: helm-plugin-tools
-    # mount an oidc token into repo-server?
-  # volumeMounts:
-  # - name: oidc-token
-  #   mountPath: /var/run/secrets/tokens
-  #   readOnly: true
 dex:
   image:
     repository: cgr.dev/ky-rafaels.example.com/dex
