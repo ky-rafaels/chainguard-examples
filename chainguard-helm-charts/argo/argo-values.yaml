@@ -16,7 +16,7 @@ repoServer:
     image: cgr.dev/ky-rafaels.example.com/custom-base
     securityContext:
       runAsNonRoot: true
-      # runAsUser: 999 # container already runs as nonroot by default 
+      runAsUser: 999 # container already runs as nonroot by default 
     volumeMounts:
       - mountPath: /var/run/argocd
         name: var-files
