@@ -17,13 +17,13 @@ data:
             cat /var/run/secrets/tokens/oidc-token | helm registry login \ 
               --username argocd-plugin \
               --password-stdin \
-              oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts
-      # generate:
-      #   command: [sh, -c]
-      #   args:
-      #     - helm template $ARGOCD_APP_NAME /tmp/chart \
-      #         --namespace $ARGOCD_APP_NAMESPACE \
-      #         --values <(echo "$ARGOCD_APP_VALUES")
-# helm pull oci://my-registry.io/my-chart \
-#   --version $HELM_CHART_VERSION \
-#   --untar --untardir /tmp/chart
+              $HELM_REGISTRY/$HELM_CHART_NAME
+      generate:
+        command: [sh, -c]
+        args:
+          - helm pull $HELM_REGISTRY/$HELM_CHART_NAME \
+              --version $HELM_CHART_VERSION \
+              --untar --untardir /tmp/chart
+          - helm template $ARGOCD_APP_NAME /tmp/chart/$HELM_CHART_NAME \
+              --namespace $ARGOCD_APP_NAMESPACE \
+              --values <(echo "$ARGOCD_APP_VALUES")
