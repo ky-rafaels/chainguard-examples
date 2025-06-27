@@ -23,6 +23,24 @@ Your pull token should already be created if you followed the steps above to dep
 ./scripts/kind-chainguard-pull-token.sh
 ```
 
+## Create an assumable identity representing the argocd repo server
+
+```bash
+chainctl iam identities create argocd-repo-server \
+    --issuer-keys="$(kubectl get --raw /openid/v1/jwks)" \
+    --identity-issuer=https://kubernetes.default.svc.cluster.local \
+    --subject=system:serviceaccount:argocd:argocd-repo-server \
+    --parent=ky-rafaels.example.com \
+    --role=registry.pull
+```
+
+## Get a token and test AuthN
+
+```bash
+TOKEN=$(kubectl create token argocd-repo-server -n argocd --audience https://issuer.enforce.dev)
+helm 
+```
+
 ## Create a plugin using custom-assembly
 
 First, ensure that you have the packages necessary for the argocd-plugin available in your private apk repo as well as the chainguard-base image. 
@@ -42,16 +60,6 @@ Then generate a package file and create the image we will use as our argocd plug
 
 ```bash
 chainctl image repo build apply -f custom-assembly/argo-plugin-apks.yaml --parent ky-rafaels.example.com --repo custom-base
-```
-
-## Create an assumable identity representing the argocd repo server
-
-```bash
-chainctl iam identities create argocd-plugin \
-    --issuer-keys="$(kubectl get --raw /openid/v1/jwks)" \
-    --identity-issuer=https://kubernetes.default.svc.cluster.local \
-    --subject=system:serviceaccount:argocd:argocd-repo-server \
-    --role=registry.pull
 ```
 
 ## Deploy a chart

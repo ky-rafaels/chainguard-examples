@@ -2,16 +2,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keycloak 
+  name: redis-cluster 
   namespace: argocd
 spec:
   project: default
   source: 
-    repoURL: oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/redis-cluster 
-    chart: redis-cluster 
-    targetRevision: 12.0.1
+    repoURL: cgr.dev/ky-rafaels.example.com/iamguarded-charts
+    # chart: redis-cluster 
+    targetRevision: HEAD
     plugin:
-      name: helm-oci
+      name: helm-oci-plugin
       env: 
         - name: $HELM_REGISTRY
           value: oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts
@@ -19,11 +19,15 @@ spec:
           value: redis-cluster
         - name: $HELM_CHART_VERSION
           value: 12.0.1
-    helm:
-      ignoreMissingValueFiles: true
-      values: |
-        global:
-          org: ky-rafaels.example.com
+      parameters:
+        - name: helm-parameters
+          map:
+            global.org: ky-rafaels.example.com
+    # helm:
+    #   passCredentials: true
+    #   values: |
+    #     global:
+    #       org: ky-rafaels.example.com
   destination:
     name: "in-cluster"
     namespace: 'redis-cluster'

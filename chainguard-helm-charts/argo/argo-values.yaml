@@ -22,14 +22,13 @@ repoServer:
         name: var-files
       - mountPath: /home/argocd/cmp-server/plugins
         name: plugins
-      - mountPath: /helm-working-dir
-        name: helm-plugin-tmp
+      - mountPath: /tmp
+        name: cmp-tmp
       - mountPath: /home/argocd/cmp-server/config/plugin.yaml
         subPath: plugin.yaml
         name: helm-plugin-config
       - name: oidc-token
         mountPath: /var/run/secrets/tokens
-        readOnly: true
   volumes:
   - name: oidc-token
     projected:
@@ -42,9 +41,12 @@ repoServer:
       name: helm-plugin-config
     name: helm-plugin-config
   - emptyDir: {}
-    name: helm-plugin-tmp
-  - emptyDir: {}
-    name: helm-plugin-tools
+    name: cmp-tmp
+  # - emptyDir: {}
+    # name: helm-plugin-tools
+  volumeMounts:
+    - name: oidc-token
+      mountPath: /var/run/secrets/tokens
 dex:
   image:
     repository: cgr.dev/ky-rafaels.example.com/dex
