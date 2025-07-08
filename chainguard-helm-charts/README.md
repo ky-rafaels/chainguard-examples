@@ -1,5 +1,22 @@
 # Chainguard Helm Charts Catalog
 
+## Helm basics with Chainguard iamguarded charts
+
+```bash
+# First login with chainctl, helm will use your local docker credentials to authenticate to the OCI repo
+chainctl auth login && chainctl auth configure-docker
+# check if you can view the chart and its values
+helm show values oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak
+# OR 
+helm show all oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak
+# Then install the chart 
+helm upgrade --install keycloak \
+-n keycloak \
+--create-namespace \
+oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak
+```
+
+
 ## Installing ArgoCD
 
 ```bash
@@ -34,6 +51,30 @@ chainctl iam identities create argocd-repo-server \
     --role=registry.pull
 ```
 
+## Create a secret for ArgoCD Repo Server
+
+```bash
+cat << EOF >> cgr-helm-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cgr-oci-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: helm
+  name: cgr-oci-repo
+  url: cgr.dev/ky-rafaels.example.com/iamguarded-charts
+  enableOCI: "true"
+  ForceHttpBasicAuth: "true"
+  username: argocd-repo-server 
+  password: <insert-token-here> # <- how can we pass token from volume?
+EOF
+
+kubectl apply -f cgr-helm-secret.yaml
+```
+
 ## Get a token and test AuthN
 
 ```bash
@@ -41,7 +82,7 @@ TOKEN=$(kubectl create token argocd-repo-server -n argocd --audience https://iss
 helm 
 ```
 
-## Create a plugin using custom-assembly
+<!-- ## Create a plugin using custom-assembly
 
 First, ensure that you have the packages necessary for the argocd-plugin available in your private apk repo as well as the chainguard-base image. 
 
@@ -60,9 +101,9 @@ Then generate a package file and create the image we will use as our argocd plug
 
 ```bash
 chainctl image repo build apply -f custom-assembly/argo-plugin-apks.yaml --parent ky-rafaels.example.com --repo custom-base
-```
+``` -->
 
-## Deploy a chart
+## Deploy an app from a chart
 
 Charts have been packaged as ArgoCD applications easing in the deployment. To deploy a chart:
 ```bash

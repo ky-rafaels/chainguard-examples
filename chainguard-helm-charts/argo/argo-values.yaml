@@ -9,26 +9,26 @@ repoServer:
   image:
     repository: cgr.dev/ky-rafaels.example.com/argocd-repo-server
     tag: 2.14.3
-  extraContainers:
-  - name: helm-plugin
-    command: [/var/run/argocd/argocd-cmp-server]
-    args: [--loglevel, debug]
-    image: cgr.dev/ky-rafaels.example.com/custom-base
-    securityContext:
-      runAsNonRoot: true
-      runAsUser: 999 # container already runs as nonroot by default 
-    volumeMounts:
-      - mountPath: /var/run/argocd
-        name: var-files
-      - mountPath: /home/argocd/cmp-server/plugins
-        name: plugins
-      - mountPath: /tmp
-        name: cmp-tmp
-      - mountPath: /home/argocd/cmp-server/config/plugin.yaml
-        subPath: plugin.yaml
-        name: helm-plugin-config
-      - name: oidc-token
-        mountPath: /var/run/secrets/tokens
+  # extraContainers:
+  # - name: helm-plugin
+  #   command: [/var/run/argocd/argocd-cmp-server]
+  #   args: [--loglevel, debug]
+  #   image: cgr.dev/ky-rafaels.example.com/custom-base
+  #   securityContext:
+  #     runAsNonRoot: true
+  #     runAsUser: 999 # container already runs as nonroot by default 
+  #   volumeMounts:
+  #     - mountPath: /var/run/argocd
+  #       name: var-files
+  #     - mountPath: /home/argocd/cmp-server/plugins
+  #       name: plugins
+  #     - mountPath: /tmp
+  #       name: cmp-tmp
+      # - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+        # subPath: plugin.yaml
+        # name: helm-plugin-config
+  #     - name: oidc-token
+  #       mountPath: /var/run/secrets/tokens
   volumes:
   - name: oidc-token
     projected:
@@ -37,11 +37,11 @@ repoServer:
           path: oidc-token
           expirationSeconds: 3600
           audience: https://issuer.enforce.dev
-  - configMap:
-      name: helm-plugin-config
-    name: helm-plugin-config
-  - emptyDir: {}
-    name: cmp-tmp
+  # - configMap:
+  #     name: helm-plugin-config
+  #   name: helm-plugin-config
+  # - emptyDir: {}
+  #   name: cmp-tmp
   # - emptyDir: {}
     # name: helm-plugin-tools
   volumeMounts:
