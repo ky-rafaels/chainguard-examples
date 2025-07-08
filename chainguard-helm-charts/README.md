@@ -4,7 +4,7 @@
 
 ```bash
 # First login with chainctl, helm will use your local docker credentials to authenticate to the OCI repo
-chainctl auth login && chainctl auth configure-docker
+chainctl auth login && chainctl auth configure-docker --pull-token --save
 # check if you can view the chart and its values
 helm show values oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak
 # OR 
