@@ -16,8 +16,7 @@ helm upgrade --install keycloak \
 oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak
 ```
 
-
-## Installing ArgoCD
+## Using ArgoCD
 
 ```bash
 helm repo add argocd https://argoproj.github.io/argo-helm
