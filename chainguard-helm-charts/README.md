@@ -41,7 +41,7 @@ chainctl auth login && chainctl auth configure-docker --pull-token --save
 helm upgrade --install keycloak oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak -n keycloak --create-namespace --set global.org=ky-rafaels.example.com -->
 
 
-### *Optional* Create pull token on kind nodes for cgr registry
+### Create pull token on kind nodes for cgr registry
 
 Your pull token should already be created if you followed the steps above to deploy keycloak. Run script to add the pull token to each of the nodes
 
