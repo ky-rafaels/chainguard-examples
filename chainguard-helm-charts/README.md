@@ -1,5 +1,15 @@
 # Chainguard Helm Charts Catalog
 
+## Kind Setup
+
+```bash
+git clone git@github.com:ky-rafaels/kind-cluster.git
+
+cd kind-cluster/
+
+./kind-cluster-deploy 1 cluster1
+```
+
 ## Helm basics with Chainguard iamguarded charts
 
 ```bash
@@ -45,7 +55,7 @@ Your pull token should already be created if you followed the steps above to dep
 chainctl iam identities create argocd-repo-server \
     --issuer-keys="$(kubectl get --raw /openid/v1/jwks)" \
     --identity-issuer=https://kubernetes.default.svc.cluster.local \
-    --subject=system:serviceaccount:argocd:argocd-repo-server \
+    --subject="system:serviceaccount:argocd:argocd-repo-server" \
     --parent=ky-rafaels.example.com \
     --role=registry.pull
 ```
@@ -72,13 +82,6 @@ stringData:
 EOF
 
 kubectl apply -f cgr-helm-secret.yaml
-```
-
-## Get a token and test AuthN
-
-```bash
-TOKEN=$(kubectl create token argocd-repo-server -n argocd --audience https://issuer.enforce.dev)
-helm 
 ```
 
 <!-- ## Create a plugin using custom-assembly
