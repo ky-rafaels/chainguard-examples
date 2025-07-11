@@ -84,6 +84,24 @@ EOF
 kubectl apply -f cgr-helm-secret.yaml
 ```
 
+You can also use the argocd tool to create your repository. First ensure you login
+
+```bash
+# Install with brew 
+brew install argocd
+
+kubectl port-forward svc/argocd-server -n argocd 8080:8080
+
+argocd login http://localhost:8080 --username admin --password <default-admin-password>
+
+argocd repo add oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
+    --enable-oci \
+    --type helm \
+    --name cgr-oci-repo \
+    --username argocd-repo-server \
+    --password $(kubectl create token argocd-repo-server --audience https://issuer.enforce.dev)
+```
+
 <!-- ## Create a plugin using custom-assembly
 
 First, ensure that you have the packages necessary for the argocd-plugin available in your private apk repo as well as the chainguard-base image. 
