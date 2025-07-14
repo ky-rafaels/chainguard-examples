@@ -46,10 +46,23 @@ helm upgrade --install keycloak oci://cgr.dev/ky-rafaels.example.com/iamguarded-
 Your pull token should already be created if you followed the steps above to deploy keycloak. Run script to add the pull token to each of the nodes
 
 ```bash
+# Create a pull token
+chainctl auth configure-docker --pull-token --save --ttl 8760h0m0s # 1 year expiration
+
+  ✔ Selected folder ky-rafaels.example.com.
+
+To use this pull token in another environment, run this command:
+
+    docker login "cgr.dev" --username "45a0c61ea6fd977f050c5fb9ac06a69eed764595/095b0c7ea9d68679" --password "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2lzc3Vlci5lbmZvcmNlLmRldiIsImV4cCI6MTc0OTczODQ2NSwiaWF0IjoxNzQ5NjUyMDY2LCJpc3MiOiJodHRwczovL3B1bGx0b2tlbi5pc3N1ZXIuY2hhaW5ndWFyZC5kZXYiLCJzdWIiOiJwdWxsLXRva2VuLTAxY2MwODkwYzA5N2ZmMzk1MDUyMWY4NWFmYmEyZDUwMGM0ODQxOWEifQ.ET7ywPUkMk5wN6p0INqhNtdnOVELySqdjp-qWedVmJkLrWlZhdFodU43P4uuR-LJ3Z9mVmd9fjDWpBtZnsCFHbczkENPzOiAFP9fsJhO_2dXT3rXCPK84ddJgRLe6oDlMA3VSa0XEclfTyBcaG4RlrgkVaGhtS7gone4Egff7bKX5Y6-TUxxLiVvCA_l_YmOixUss_Mj1Qxxb81sCeh7x4FSpOGWtmU2Z7Hy6B_rGk17zXMO_GYcuyzAMxfFdQl1Ov18t7KxymQwIoS7UF1fx_5ECR8fgArLM8NikGOjzkiQZuSzeI_hl_GnUFdPTAAhmjpJEWO0isiSPWgpkUPx5scoSUm6jzfduvRgGcmjRxT_pq6MWzFJNw9gv9gVehJuW5lKzNIgMTfJXO5Roba8WCwwxiUknhZXP8DeD_kdAN2-JbkfOYg3aPVU5jFTtA6TJKlh0uQA5OGN5hG_PnyzIr0vu4VVninJTWm66RppdlffhG-1xY9lpXgD2k2TIhygFL8iEBNszq0siLVA3uTH6NZY8iGRFqziUAGnyD80aHn52tIeCBBAOyS6qfcRLzqO6dQX95uscdCOuy-5rxU9n4208m5duLXdZtVWa9gp2vg-OmxnCPVdXmPCTA6RF43gDVkxKGMfvkUkTW1nKNvIUx_ikC9tLHDuZdi8FKLeYEg"
+
+Configuring identity "45a0c61ea6fd977f050c5fb9ac06a69eed764595/095b0c7ea9d68679" for pulls from cgr.dev (expires 2025-06-12T09:27:45-05:00).
+Overwriting existing credentials.
+
+# Ruh script to copy token to all kind k8s nodes
 ./scripts/kind-chainguard-pull-token.sh
 ```
 
-## Create an assumable identity representing the argocd repo server
+<!-- ## Create an assumable identity representing the argocd repo server
 
 ```bash
 chainctl iam identities create argocd-repo-server \
@@ -58,6 +71,13 @@ chainctl iam identities create argocd-repo-server \
     --subject="system:serviceaccount:argocd:argocd-repo-server" \
     --parent=ky-rafaels.example.com \
     --role=registry.pull
+``` -->
+Then save credentials as env vars to be used later in configuration
+
+```bash
+export HELMUSER=45a0c61ea6fd977f050c5fb9ac06a69eed764595/095b0c7ea9d68679
+
+export HELMPASS=eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2lzc3Vlci5lbmZvcmNlLmRldiIsImV4cCI6MTc0OTczODQ2NSwiaWF0IjoxNzQ5NjUyMDY2LCJpc3MiOiJodHRwczovL3B1bGx0b2tlbi5pc3N1ZXIuY2hhaW5ndWFyZC5kZXYiLCJzdWIiOiJwdWxsLXRva2VuLTAxY2MwODkwYzA5N2ZmMzk1MDUyMWY4NWFmYmEyZDUwMGM0ODQxOWEifQ.ET7ywPUkMk5wN6p0INqhNtdnOVELySqdjp-qWedVmJkLrWlZhdFodU43P4uuR......
 ```
 
 ## Create a secret for ArgoCD Repo Server
@@ -77,8 +97,8 @@ stringData:
   url: cgr.dev/ky-rafaels.example.com/iamguarded-charts
   enableOCI: "true"
   ForceHttpBasicAuth: "true"
-  username: argocd-repo-server 
-  password: <insert-token-here> # <- how can we pass token from volume?
+  username: ${HELMUSER} 
+  password: ${HELMPASS} 
 EOF
 
 kubectl apply -f cgr-helm-secret.yaml
@@ -98,8 +118,8 @@ argocd repo add oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
     --enable-oci \
     --type helm \
     --name cgr-oci-repo \
-    --username argocd-repo-server \
-    --password $(kubectl create token argocd-repo-server --audience https://issuer.enforce.dev)
+    --username ${HELMUSER} \
+    --password ${HELMPASS}
 ```
 
 <!-- ## Create a plugin using custom-assembly
@@ -114,6 +134,7 @@ contents:
     - yq 
     - helm 
     - bash-binsh
+    - chainctl 
 EOF
 ```
 

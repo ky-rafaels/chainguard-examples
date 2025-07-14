@@ -9,7 +9,7 @@ spec:
   source: 
     repoURL: cgr.dev/ky-rafaels.example.com/iamguarded-charts
     chart: redis-cluster 
-    targetRevision: HEAD
+    targetRevision: 12.0.1 
     # plugin:
     #   name: helm-oci-plugin
     #   env: 
