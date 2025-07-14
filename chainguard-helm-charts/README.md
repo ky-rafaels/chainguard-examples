@@ -49,6 +49,7 @@ Your pull token should already be created if you followed the steps above to dep
 # Create a pull token
 chainctl auth configure-docker --pull-token --save --ttl 8760h0m0s # 1 year expiration
 
+# ---SAMPLE OUTPUT---
   ✔ Selected folder ky-rafaels.example.com.
 
 To use this pull token in another environment, run this command:
@@ -57,9 +58,21 @@ To use this pull token in another environment, run this command:
 
 Configuring identity "45a0c61ea6fd977f050c5fb9ac06a69eed764595/095b0c7ea9d68679" for pulls from cgr.dev (expires 2025-06-12T09:27:45-05:00).
 Overwriting existing credentials.
+```
 
-# Ruh script to copy token to all kind k8s nodes
+Next you can then run script to copy token to all kind k8s nodes
+
+```bash
 ./scripts/kind-chainguard-pull-token.sh
+
+# ---SAMPLE OUTPUT---
+Configuring identity "b25cd7fccd73dc9a14b3ec891625c5f172624a75/a67f8d22d75f8832" for pulls from cgr.dev (expires 2025-08-13T12:20:03-05:00).
+Moving credentials to kind cluster name='kind1' nodes ...
+Successfully copied 3.07kB to kind1-control-plane:/var/lib/kubelet/config.json
+Successfully copied 3.07kB to kind1-worker2:/var/lib/kubelet/config.json
+Successfully copied 3.07kB to kind1-worker:/var/lib/kubelet/config.json
+Done!
+Removing /var/folders/v_/hp44vp812712ftk9gnzyxj880000gn/T/tmp.DFw44UWmsG/*
 ```
 
 <!-- ## Create an assumable identity representing the argocd repo server
