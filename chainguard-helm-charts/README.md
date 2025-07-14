@@ -125,7 +125,7 @@ brew install argocd
 
 kubectl port-forward svc/argocd-server -n argocd 8080:8080
 
-argocd login http://localhost:8080 --username admin --password <default-admin-password>
+argocd login http://localhost:8080 --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo) 
 
 argocd repo add oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
     --enable-oci \
