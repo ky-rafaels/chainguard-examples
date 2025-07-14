@@ -1,6 +1,6 @@
 # Chainguard Helm Charts Catalog
 
-## Kind Setup
+# Kind Setup
 
 ```bash
 git clone git@github.com:ky-rafaels/kind-cluster.git
@@ -10,7 +10,7 @@ cd kind-cluster/
 ./kind-cluster-deploy 1 cluster1
 ```
 
-## Helm basics with Chainguard iamguarded charts
+# Helm basics with Chainguard iamguarded charts
 
 ```bash
 # First login with chainctl, helm will use your local docker credentials to authenticate to the OCI repo
@@ -26,7 +26,7 @@ helm upgrade --install keycloak \
 oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak
 ```
 
-## Using ArgoCD
+# Using ArgoCD
 
 ```bash
 helm repo add argocd https://argoproj.github.io/argo-helm
@@ -36,10 +36,7 @@ helm upgrade --install argocd argocd/argo-cd \
     --values argo/argo-values.yaml
 ```
 
-<!-- # Install keycloak iamguarded chart
-chainctl auth login && chainctl auth configure-docker --pull-token --save
-helm upgrade --install keycloak oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts/keycloak -n keycloak --create-namespace --set global.org=ky-rafaels.example.com -->
-
+## Static Pull Token Example
 
 ### Create pull token on kind nodes for cgr registry
 
@@ -75,16 +72,6 @@ Done!
 Removing /var/folders/v_/hp44vp812712ftk9gnzyxj880000gn/T/tmp.DFw44UWmsG/*
 ```
 
-<!-- ## Create an assumable identity representing the argocd repo server
-
-```bash
-chainctl iam identities create argocd-repo-server \
-    --issuer-keys="$(kubectl get --raw /openid/v1/jwks)" \
-    --identity-issuer=https://kubernetes.default.svc.cluster.local \
-    --subject="system:serviceaccount:argocd:argocd-repo-server" \
-    --parent=ky-rafaels.example.com \
-    --role=registry.pull
-``` -->
 Then save credentials as env vars to be used later in configuration
 
 ```bash
@@ -93,7 +80,7 @@ export HELMUSER=45a0c61ea6fd977f050c5fb9ac06a69eed764595/095b0c7ea9d68679
 export HELMPASS=eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2lzc3Vlci5lbmZvcmNlLmRldiIsImV4cCI6MTc0OTczODQ2NSwiaWF0IjoxNzQ5NjUyMDY2LCJpc3MiOiJodHRwczovL3B1bGx0b2tlbi5pc3N1ZXIuY2hhaW5ndWFyZC5kZXYiLCJzdWIiOiJwdWxsLXRva2VuLTAxY2MwODkwYzA5N2ZmMzk1MDUyMWY4NWFmYmEyZDUwMGM0ODQxOWEifQ.ET7ywPUkMk5wN6p0INqhNtdnOVELySqdjp-qWedVmJkLrWlZhdFodU43P4uuR......
 ```
 
-## Create a secret for ArgoCD Repo Server
+### Create a secret for ArgoCD Repo Server
 
 ```bash
 cat << EOF >> cgr-helm-secret.yaml
@@ -135,7 +122,16 @@ argocd repo add oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
     --password ${HELMPASS}
 ```
 
-<!-- ## Create a plugin using custom-assembly
+### Deploy an app from a chart
+
+Charts have been packaged as ArgoCD applications easing in the deployment. To deploy a chart:
+```bash
+kubectl apply -f apps/<app-name>.yaml
+```
+
+# Dynamic AuthN using ArgoCD Config Plugin
+
+## Create a plugin using custom-assembly
 
 First, ensure that you have the packages necessary for the argocd-plugin available in your private apk repo as well as the chainguard-base image. 
 
@@ -155,11 +151,4 @@ Then generate a package file and create the image we will use as our argocd plug
 
 ```bash
 chainctl image repo build apply -f custom-assembly/argo-plugin-apks.yaml --parent ky-rafaels.example.com --repo custom-base
-``` -->
-
-## Deploy an app from a chart
-
-Charts have been packaged as ArgoCD applications easing in the deployment. To deploy a chart:
-```bash
-kubectl apply -f apps/<app-name>.yaml
 ```
