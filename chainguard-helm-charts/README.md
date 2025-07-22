@@ -137,7 +137,25 @@ You can then view ArgoCD to confirm application has properly rolled out
 
 ## Rotate Pull Token
 
-
+```bash
+kubectl apply -f - |
+cat << EOF >> cgr-helm-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cgr-oci-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: helm
+  name: cgr-oci-repo
+  url: cgr.dev/ky-rafaels.example.com/iamguarded-charts
+  enableOCI: "true"
+  ForceHttpBasicAuth: "true"
+  username: ${HELMUSER} 
+  password: ${HELMPASS} 
+EOF
 <!-- 
 # Dynamic AuthN using ArgoCD Config Plugin
 
