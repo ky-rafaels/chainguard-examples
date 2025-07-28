@@ -130,15 +130,14 @@ Charts have been packaged as ArgoCD applications easing in the deployment. To de
 ```bash
 kubectl apply -f apps/<app-name>.yaml
 ```
-
 You can then view ArgoCD to confirm application has properly rolled out
 
 ![argo app sync](img/app-rollout.png)
 
 ## Rotate Pull Token
 
+TODO
 
-<!-- 
 # Dynamic AuthN using ArgoCD Config Plugin
 
 ## Create a plugin using custom-assembly
@@ -161,4 +160,4 @@ Then generate a package file and create the image we will use as our argocd plug
 
 ```bash
 chainctl image repo build apply -f custom-assembly/argo-plugin-apks.yaml --parent ky-rafaels.example.com --repo custom-base
-``` -->
+```
