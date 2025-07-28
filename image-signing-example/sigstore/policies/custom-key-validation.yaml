@@ -1,0 +1,25 @@
+---
+apiVersion: policy.sigstore.dev/v1alpha1
+kind: ClusterImagePolicy
+metadata:
+  name: custom-key-validation
+spec:
+  images:
+  - glob: "ttl.sh/*"
+  authorities:
+  - name: custom-key
+    key:
+      data: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEDWIh6o7q+081RuGUqYVV+DyLwTNV
+        1D4AbR7QMgejYT5zffY4asCkW9KYl7ZVRuic8IEUQ8PzXo3kLE++KP34/w==
+        -----END PUBLIC KEY-----
+    ctlog:
+      url: https://rekor.sigstore.dev
+    # attestations:
+    # - name: must-have-spdxjson
+    #   predicateType: spdxjson
+    #   policy:
+    #     type: cue
+    #     data: |
+    #       predicateType: "https://spdx.dev/Document"
