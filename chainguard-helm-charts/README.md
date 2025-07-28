@@ -2,6 +2,8 @@
 
 # Kind Setup
 
+Deploy a 3 node kind cluster
+
 ```bash
 git clone git@github.com:ky-rafaels/kind-cluster.git
 
@@ -128,6 +130,13 @@ Charts have been packaged as ArgoCD applications easing in the deployment. To de
 ```bash
 kubectl apply -f apps/<app-name>.yaml
 ```
+You can then view ArgoCD to confirm application has properly rolled out
+
+![argo app sync](img/app-rollout.png)
+
+## Rotate Pull Token
+
+TODO
 
 # Dynamic AuthN using ArgoCD Config Plugin
 
